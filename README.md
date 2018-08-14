@@ -24,32 +24,31 @@ The code for our work is uploaded at https://github.com/ananyahjha93/cycle-consi
 
 ### Tricks to stabilize the adversarial architecture
 
-Before we move on to the results, we mention some of the tricks/ GAN hacks used in this implementation to stabilize the training:
+Before we move on to the results, we mention some of the tricks/GAN hacks used in this implementation to stabilize the training:
 
- - Training the discriminator only when the accuracy of the previous batch was less than 80%. This trick was first proposed in
+ - "Training the discriminator only when the accuracy of the previous batch was less than 80%." This trick was first proposed in
 'Learning a Probabilistic Latent Space of Object Shapes via 3D Generative-Adversarial Modeling' (http://3dgan.csail.mit.edu/papers/3dgan_nips.pdf),
 and we found the claim that it stabilizes training to be quite true. The idea is simple, if the discriminator is way ahead of the generator,
- the generator will not be able to extract good signal from the gradient of the discriminator.
+the generator will not be able to extract good signal from the gradient of the discriminator.
 
- - We train the generator 2 times for each iteration of discriminator training. (Opposite of this hack is mentioned on this repository of
+ - "We train the generator 2 times for each iteration of discriminator training." (Opposite of this hack is mentioned on this repository of
  GAN hacks: https://github.com/soumith/ganhacks, i.e. train the discriminator more)
 
- - Instead of using an embedding layer to provide class labels for images as additional channels in the discriminator
+ - Instead of using an embedding layer to provide class labels as additional channels in the discriminator
  (GAN hacks: https://github.com/soumith/ganhacks), we pass pairs of images to the discriminator. This way, we reduce the level of supervision
- required to only pairwise instead of actual class labels, which were required for the embedding layer. We also found that using this method was
- faster and more stable than using an embedding layer.
+ required to only pairwise instead of actual class labels. We also found that this method was faster and more stable than using an embedding layer.
 
 ## Results
 
 ### Image generation by swapping class and style embeddings
 
 We were able to replicate the visual results of disentangling factors of variation from the paper.
-The first column in MNIST, the second is 2D Sprites and the third is LINE-MOD. Z dim here refers to the dimensionality of the
+The first column is MNIST, the second is 2D Sprites and the third is LINE-MOD. 'z dim' here refers to the dimensionality of the
 unspecified factors latent space (style latent space) described in the paper.
 
 <table style="width:100%">
     <tr>
-        <td align="center"><img src="images/mnist_16.png" alt="MNIST" width="250px" /></td>
+        <td align="center"><img src="images/mnist_16.png" alt="MNIST" width="300px" /></td>
         <td align="center"><img src="images/sprites_512.png" alt="2D Sprites" width="300px" /></td>
         <td align="center"><img src="images/linemod_64.png" alt="LINEMOD" width="300px" /></td>
     </tr>
@@ -59,7 +58,7 @@ unspecified factors latent space (style latent space) described in the paper.
         <td align="center">z dim: 64</td>
     </tr>
     <tr>
-        <td align="center"><img src="images/mnist_64.png" alt="MNIST" width="250px" /></td>
+        <td align="center"><img src="images/mnist_64.png" alt="MNIST" width="300px" /></td>
         <td align="center"><img src="images/sprites_1024.png" alt="2D Sprites" width="300px" /></td>
         <td align="center"><img src="images/linemod_256.png" alt="LINEMOD" width="300px" /></td>
     </tr>
@@ -72,8 +71,8 @@ unspecified factors latent space (style latent space) described in the paper.
 
 ### Classification results on latent spaces
 
-In the table below, we present the results of classification on both the specified factors (class) and unspecified factors (style) latent codes.
-Ideally, the specified factors latent code should have classification accuracy as high as possible and the unspecified factors latent space should
+In the table below, we present the results of classification on both the specified factors (class, s) and unspecified factors (style, z) latent codes.
+Ideally, the specified factors latent space should have a classification accuracy as high as possible and the unspecified factors latent space should
 have a classification accuracy as low as possible.
 
 z - > unspecified factors latent space (style) | s -> specified factors latent space (class)
@@ -149,13 +148,13 @@ z - > unspecified factors latent space (style) | s -> specified factors latent s
 
 The following are t-SNE plots of the unspecified factors latent space (style latent space) for the MNIST dataset. Ideally they should not have
 any structure corresponding to class labels. As we see for the figure on left, the t-SNE plot does show structure hence proving that adversarial
-architectures, although produce good quality images, do not exactly produce disentangled representations. Instead, they train the decoder to ignore
+architectures, while producing good quality images, do not exactly produce disentangled representations. Instead, they train the decoder to ignore
 any class specific information present in the style latent space.
 
 The plot on the right shows a style latent space that is highly mixed and it is difficult to see any structure in it. This is obtained when
-we reparameterize the output of style latent space as in a VAE. This shows that reparameterization during training helps add to class confusion
-in the style latent space. The classification results presented above are taken after reparameterization. Although there is no visible structure, a
-trained classifier can still identify class labels for MNIST fairly easily even after reparameterization.
+we reparameterize the output of style latent space as in a VAE training. This shows that reparameterization during training helps add to class confusion
+in the style latent space. The classification results presented above are taken after reparameterization. Even after reparameterization,
+although there is no visible structure, a trained classifier can still identify class labels for MNIST fairly easily. The same goes for LINE-MOD.
 
 
 <table style="width:100%">
